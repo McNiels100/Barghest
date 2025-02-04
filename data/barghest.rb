@@ -49,27 +49,25 @@ class Barghest
 
     def open_file (path, number_of_times = 1)
         path_to_relative = File.expand_path(path)
-        sleeper_open_image = sleep(0.2)
-    
-        if (detect_os == "Linux")
 
-            number_of_times.times do
-                system("xdg-open #{path_to_relative}")
-                sleeper_open_image
-            end
-        elsif detect_os == "macOS"
+        os_commands = {
+            "Linux" => "xdg-open",
+            "macOS" => "open",
+            "Windows" => "start"
+        }
 
-            number_of_times.times do 
-                system("open #{path_to_relative}")
-                sleeper_open_image
-            end
-        elsif detect_os == "Windows"
+        os = detect_os
 
-            number_of_times.times do 
-                system("start #{path_to_relative}")
-                sleeper_open_image
-            end
+        unless os_commands.key?(os)
+            raise "Unsupported operating system #{os}"
         end
+
+        command = os_commands[os]
+
+        number_of_times.times do
+            system("#{command} #{path_to_relative}")
+            sleep(0.2)
+        end 
     end
     
 end
